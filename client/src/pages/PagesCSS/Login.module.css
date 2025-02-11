@@ -1,0 +1,82 @@
+.mainContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  font-size: 1em;
+  color: var(--fifthly-color);
+  text-shadow: -1px -1px 0 var(--tertiary-color), 1px -1px 0 black, -1px 1px 0
+    black, 1px 1px 0 black;
+  padding-bottom: 1.5em;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 1em;
+  padding: 0.5em;
+  border-radius: 10px;
+  background-color: var(--light);
+  box-shadow: var(--box-shadow);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5em;
+  gap: 0.2em;
+}
+
+.label {
+  font-size: 0.7em;
+  font-weight: bold;
+  color: var(--fifthly-color);
+}
+
+.input {
+  border: 0.2em solid var(--fifthly-color);
+  border-radius: 5px;
+  height: 1.5em;
+}
+
+.button {
+  padding: 0.4em 15px;
+  border: solid 3px var(--fifthly-color);
+  border-radius: 5px;
+  background-color: var(--tertiary-color);
+  color: var(--fifthly-color);
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: var(--fifthly-color);
+  color: var(--tertiary-color);
+}
+
+.text {
+  font-size: 0.6em;
+  color: var(--fifthly-color);
+  font-weight: bold;
+}
+
+.toggleButton {
+  color: var(--tertiary-color);
+  cursor: pointer;
+  text-shadow: var(--box-shadow);
+}
+
+.toggleButton:hover {
+  color: var(--fifthly-color);
+}

@@ -1,0 +1,7 @@
+@import "../../root.css";
+
+.pages {
+  color: var(--dark);
+  text-align: center;
+  font-size: calc(1.5rem + 2vw);
+}
