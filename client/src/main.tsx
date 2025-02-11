@@ -2,8 +2,14 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 /* ************************************************************************* */
+
+/**
+ * Contexts
+ */
+import { AuthProvider } from "./contexts/AuthContext";
 
 import App from "./App";
 import Account from "./pages/Account";
@@ -55,6 +61,9 @@ if (rootElement == null) {
 // Render the app inside the root element
 createRoot(rootElement).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+      <ToastContainer />
+    </AuthProvider>
   </StrictMode>,
 );

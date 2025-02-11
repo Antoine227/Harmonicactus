@@ -7,6 +7,10 @@
   height: 100vh;
 }
 
+.head {
+  padding-bottom: 1.5em;
+}
+
 .title {
   display: flex;
   justify-content: center;
@@ -14,7 +18,14 @@
   color: var(--fifthly-color);
   text-shadow: -1px -1px 0 var(--tertiary-color), 1px -1px 0 black, -1px 1px 0
     black, 1px 1px 0 black;
-  padding-bottom: 1.5em;
+  margin-bottom: 0.2em;
+}
+
+.quote {
+  font-style: italic;
+  font-weight: bold;
+  font-size: 0.5em;
+  margin-top: 0;
 }
 
 .form {
@@ -34,6 +45,7 @@
   flex-direction: column;
   padding: 0.5em;
   gap: 0.2em;
+  width: 100%;
 }
 
 .label {
@@ -45,7 +57,9 @@
 .input {
   border: 0.2em solid var(--fifthly-color);
   border-radius: 5px;
-  height: 1.5em;
+  height: 3vh;
+  max-height: 2em;
+  margin: 0.2em 1.5em;
 }
 
 .button {
@@ -54,7 +68,7 @@
   border-radius: 5px;
   background-color: var(--tertiary-color);
   color: var(--fifthly-color);
-  font-weight: bold;
+  font-weight: bolder;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s;
@@ -79,4 +93,10 @@
 
 .toggleButton:hover {
   color: var(--fifthly-color);
+}
+
+.errorText {
+  color: red;
+  font-size: 0.4em;
+  margin-top: 0.2em;
 }

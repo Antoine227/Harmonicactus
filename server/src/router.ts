@@ -6,12 +6,14 @@ const router = express.Router();
 // Define Your API Routes Here
 /* ************************************************************************* */
 
-// Define item-related routes
-import itemActions from "./modules/item/itemActions";
+/** login / register /logout */
+import authMiddleware from "./Middlewares/authMiddleware";
+import authActions from "./modules/auth/authActions";
 
-router.get("/api/items", itemActions.browse);
-router.get("/api/items/:id", itemActions.read);
-router.post("/api/items", itemActions.add);
+router.post("/api/register", authMiddleware.hashPwd, authActions.register);
+router.post("/api/login", authMiddleware.verifyPwd, authActions.login);
+router.get("/api/logout", authMiddleware.logout);
+router.get("/api/me", authMiddleware.checkToken); // pour vérifier le token
 
 /* ************************************************************************* */
 
