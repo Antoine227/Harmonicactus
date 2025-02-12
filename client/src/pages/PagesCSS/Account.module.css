@@ -1,0 +1,114 @@
+.accountContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: auto;
+  padding: 1em 0;
+}
+
+.createProjectSection {
+  display: flex;
+  margin-bottom: 1em;
+}
+
+.projectTitleInput {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.createProjectButton {
+  padding: 10px 15px;
+  background-color: var(--secondary-color);
+  color: var(--light);
+  border: solid 5px var(--fifthly-color);
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.deleteProjectSection {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.deleteProjectButton {
+  /* Style pour le bouton Supprimer/Annuler */
+  padding: 10px 15px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.confirmDeleteButton {
+  /* Style pour le bouton Confirmer */
+  padding: 10px 15px;
+  background-color: var(--fifthly-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.confirmDeleteButton:disabled {
+  /* Style pour le bouton Confirmer désactivé */
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.projectsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.projectLink {
+  text-decoration: none;
+  color: inherit;
+  width: 80%;
+  max-width: 500px;
+}
+
+.projectItem {
+  border: solid 5px var(--fifthly-color);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  width: 90%;
+  text-align: start;
+  align-content: center;
+  background-color: var(--secondary-color);
+  min-height: 3em;
+  color: var(--light);
+  font-size: 0.7em;
+  font-weight: bold;
+  padding-left: 0.3em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Ajout : espace entre les éléments */
+}
+
+.deleteFieldInput {
+  display: flex;
+  width: 100%; /* Ajout : prend toute la largeur */
+  justify-content: space-between; /* Ajout : espace entre les éléments */
+  align-items: center; /* Ajout : centre verticalement */
+}
+
+.deleteBoxInput {
+  width: 2.5em;
+  height: 1.5em;
+}
+
+.noProjectsMessage {
+  font-style: italic;
+  color: var(--fifthly-color);
+}

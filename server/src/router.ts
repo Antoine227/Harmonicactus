@@ -96,6 +96,13 @@ router.post(
   accountActions.createProject,
 );
 
+// Supprimer un projet
+router.delete(
+  "/api/account/projects/:id",
+  authMiddleware.checkToken,
+  accountActions.deleteProject,
+);
+
 /* ************************************************************************* */
 
 export default router;

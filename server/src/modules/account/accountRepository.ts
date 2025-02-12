@@ -25,6 +25,15 @@ class AccountRepository {
     );
     return result.insertId;
   }
+
+  // The D of Crud - Delete operation
+  async deleteProject(projectId: number): Promise<boolean> {
+    const [result] = await databaseClient.query<Result>(
+      "DELETE FROM project WHERE id = ?",
+      [projectId],
+    );
+    return result.affectedRows > 0;
+  }
 }
 
 export default new AccountRepository();

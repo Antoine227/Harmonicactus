@@ -1,4 +1,5 @@
 import type { RequestHandler } from "express";
+import type { NextFunction, Request, Response } from "express";
 import authMiddleware from "../../Middlewares/authMiddleware";
 import accountRepository from "./accountRepository";
 
@@ -27,4 +28,28 @@ const createProject: RequestHandler = async (req, res, next) => {
   }
 };
 
-export default { getProjects, createProject };
+const deleteProject: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const projectId = Number(req.params.id); // Récupère l'ID du projet à supprimer
+    if (Number.isNaN(projectId)) {
+      res.status(400).json({ message: "ID de projet invalide" });
+    }
+    const success = await accountRepository.deleteProject(projectId);
+    if (success) {
+      res.status(200).json({ message: "Projet supprimé avec succès" });
+    } else {
+      res.status(404).json({ message: "Projet non trouvé" });
+    }
+  } catch (error) {
+    console.error("Erreur lors de la suppression du projet :", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la suppression du projet" });
+  }
+};
+
+export default { getProjects, createProject, deleteProject };
