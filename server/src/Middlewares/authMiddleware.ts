@@ -19,10 +19,10 @@ const hashPwd: RequestHandler = async (req, res, next) => {
 // Middleware pour vérifier le mot de passe lors de la connexion
 const verifyPwd: RequestHandler = async (req, res, next) => {
   try {
-    const user = await authRepository.read(req.body.email);
+    const user = await authRepository.read(req.body.pseudo);
 
     if (!user) {
-      res.status(401).json({ message: "Invalid email or password" });
+      res.status(401).json({ message: "Invalid pseudo or password" });
       return;
     }
 
@@ -45,7 +45,7 @@ const verifyPwd: RequestHandler = async (req, res, next) => {
           message: "Login successful",
         });
     } else {
-      res.status(401).json({ message: "Invalid email or password" });
+      res.status(401).json({ message: "Invalid pseudo or password" });
     }
   } catch (error) {
     next(error);

@@ -42,7 +42,7 @@ function Login() {
       successToast(`Bienvenue, ${response.data.user.pseudo} !`);
       navigate("/account");
     } catch (error) {
-      errorToast("Email ou pseudo invalide");
+      errorToast("Mot de passe ou pseudo invalide");
       console.error("Erreur lors de l'opération:", error);
     }
   };
