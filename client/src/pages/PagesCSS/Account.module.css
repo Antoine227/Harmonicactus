@@ -17,6 +17,7 @@
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-right: 10px;
+  box-shadow: var(--box-shadow);
 }
 
 .createProjectButton {
@@ -27,6 +28,11 @@
   border-radius: 10px;
   cursor: pointer;
   font-weight: bold;
+  box-shadow: var(--box-shadow);
+}
+
+.createProjectButton:hover {
+  background-color: var(--fifthly-color);
 }
 
 .deleteProjectSection {
@@ -36,7 +42,6 @@
 }
 
 .deleteProjectButton {
-  /* Style pour le bouton Supprimer/Annuler */
   padding: 10px 15px;
   background-color: #dc3545;
   color: white;
@@ -45,10 +50,14 @@
   cursor: pointer;
   margin-right: 10px;
   font-weight: bold;
+  box-shadow: var(--box-shadow);
+}
+
+.deleteProjectButton:hover {
+  background-color: #dc3546a8;
 }
 
 .confirmDeleteButton {
-  /* Style pour le bouton Confirmer */
   padding: 10px 15px;
   background-color: var(--fifthly-color);
   color: white;
@@ -56,10 +65,14 @@
   border-radius: 5px;
   cursor: pointer;
   font-weight: bold;
+  box-shadow: var(--box-shadow);
+}
+
+.confirmDeleteButton:hover {
+  background-color: #1da002a8;
 }
 
 .confirmDeleteButton:disabled {
-  /* Style pour le bouton Confirmer désactivé */
   background-color: #ccc;
   cursor: not-allowed;
 }
@@ -93,14 +106,15 @@
   padding-left: 0.3em;
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Ajout : espace entre les éléments */
+  justify-content: space-between;
+  box-shadow: var(--box-shadow);
 }
 
 .deleteFieldInput {
   display: flex;
-  width: 100%; /* Ajout : prend toute la largeur */
-  justify-content: space-between; /* Ajout : espace entre les éléments */
-  align-items: center; /* Ajout : centre verticalement */
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .deleteBoxInput {

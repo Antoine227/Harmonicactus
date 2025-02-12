@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"; // Importe Link
 import Navbar from "../components/navbar/navbar";
 import { useAuth } from "../contexts/AuthContext"; // Importe le contexte d'authentification
 import api from "../helpers/api";
+import { errorToast, successToast } from "../helpers/toast";
 import styles from "./PagesCSS/Account.module.css";
 
 interface Project {
@@ -40,7 +41,7 @@ function Account() {
     // Créer un nouveau projet
     try {
       if (!newProjectTitle.trim()) {
-        alert("Veuillez entrer un titre pour le projet.");
+        errorToast("Veuillez entrer un titre pour le projet.");
         return;
       }
 
@@ -71,7 +72,7 @@ function Account() {
   const handleDeleteProjects = async () => {
     try {
       if (selectedProjects.length === 0) {
-        alert("Veuillez sélectionner au moins un projet à supprimer.");
+        errorToast("Veuillez sélectionner au moins un projet à supprimer.");
         return;
       }
 
@@ -81,7 +82,7 @@ function Account() {
           await api.delete(`/api/account/projects/${projectId}`);
         }),
       );
-
+      successToast("Suppression réussie !");
       // Mise à jour de la liste des projets
       setProjects(
         projects.filter((project) => !selectedProjects.includes(project.id)),
@@ -90,7 +91,7 @@ function Account() {
       setIsDeleteMode(false); // Désactive le mode suppression
     } catch (error) {
       console.error("Erreur lors de la suppression des projets:", error);
-      // Gérer l'erreur (par exemple, afficher un message à l'utilisateur)
+      errorToast("Erreur lors de la suppression des projets");
     }
   };
 
