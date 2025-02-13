@@ -11,12 +11,12 @@ import { ToastContainer } from "react-toastify";
  */
 import { AuthProvider } from "./contexts/AuthContext";
 
-import App from "./App";
-import Account from "./pages/Account";
 // Import the main app component
+import Account from "./pages/Account";
 import Layout from "./pages/Layout";
 import Login from "./pages/Login";
 import Page404 from "./pages/Page404";
+import Project from "./pages/Project";
 import SignIn from "./pages/Signin";
 
 /* ************************************************************************* */
@@ -40,7 +40,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/project/:id",
-        element: <App />,
+        element: <Project />,
       },
       {
         path: "*",

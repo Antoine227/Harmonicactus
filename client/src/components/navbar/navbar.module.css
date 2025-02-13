@@ -41,8 +41,8 @@
   align-items: center;
   font-size: 0.8em;
   color: var(--fifthly-color);
-  text-shadow: -1px -1px 0 #927c02, 1px -1px 0 black, -1px 1px 0 black, 1px 1px
-    0 black;
+  text-shadow: -2px -2px 0 var(--secondary-color), 2px -1px 0 black, -2px 1px 0
+    black, 1px 1px 0 black;
   @media screen and (min-width: 768px) {
     font-size: 1em;
   }

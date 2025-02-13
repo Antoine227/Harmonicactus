@@ -1,7 +1,7 @@
 import databaseClient from "../../../database/client";
 import type { Result, Rows } from "../../../database/client";
 
-type ProjectDetails = {
+export type ProjectDetails = {
   id: number;
   title: string;
   user_id: number;
@@ -165,6 +165,46 @@ class ProjectRepository {
     const [result] = await databaseClient.query<Result>(
       "DELETE FROM task_assignment WHERE task_id = ? AND user_id = ?",
       [taskId, userId],
+    );
+    return result.affectedRows > 0;
+  }
+
+  async updateStep(
+    stepId: number,
+    name: string,
+    type: "To do" | "En cours" | "Bloqué" | "Fini",
+  ): Promise<boolean> {
+    const [result] = await databaseClient.query<Result>(
+      "UPDATE step SET name = ?, type = ? WHERE id = ?",
+      [name, type, stepId],
+    );
+    return result.affectedRows > 0;
+  }
+
+  async updateTask(
+    taskId: number,
+    Description: string,
+    type: "To do" | "En cours" | "Bloqué" | "Fini",
+  ): Promise<boolean> {
+    const [result] = await databaseClient.query<Result>(
+      "UPDATE task SET Description = ?, type = ? WHERE id = ?",
+      [Description, type, taskId],
+    );
+    return result.affectedRows > 0;
+  }
+
+  async deleteStep(stepId: number): Promise<boolean> {
+    const [result] = await databaseClient.query<Result>(
+      "DELETE FROM step WHERE id = ?",
+      [stepId],
+    );
+    return result.affectedRows > 0;
+  }
+
+  async deleteTask(taskId: number): Promise<boolean> {
+    const [result] = await databaseClient.query<Result>(
+      "DELETE FROM task WHERE id = ?",
+      [taskId],
     );
     return result.affectedRows > 0;
   }

@@ -11,6 +11,14 @@ create table project (
   foreign key(user_id) references user(id)
 );
 
+CREATE TABLE project_assignment (
+    project_id INT UNSIGNED NOT NULL,
+    user_id INT UNSIGNED NOT NULL,
+    PRIMARY KEY (project_id, user_id),
+    FOREIGN KEY (project_id) REFERENCES project(id),
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
 create table step (
   id int unsigned primary key auto_increment not null,
   name varchar(255) not null,
@@ -56,8 +64,25 @@ INSERT INTO project (title, user_id) VALUES
 
 -- Récupération des IDs des projets
 SET @projet_alice_1 = (SELECT id FROM project WHERE title = 'Projet Perso Alice 1' AND user_id = @alice_id);
-SET @projet_commun = (SELECT id FROM project WHERE title = 'Projet Commun' AND user_id = @alice_id); -- Important : on prend l'ID du Projet Commun créé par Alice.
+SET @projet_commun_alice = (SELECT id FROM project WHERE title = 'Projet Commun' AND user_id = @alice_id); -- Important : on prend l'ID du Projet Commun créé par Alice.
 SET @projet_bob_1 = (SELECT id FROM project WHERE title = 'Projet Perso Bob 1' AND user_id = @bob_id);
+SET @projet_commun_bob = (SELECT id FROM project WHERE title = 'Projet Commun' AND user_id = @bob_id);
+
+-- Ajout des participants aux projets (table project_assignment)
+-- Alice participe à ses projets
+INSERT INTO project_assignment (project_id, user_id) VALUES
+(@projet_alice_1, @alice_id),
+(@projet_commun_alice, @alice_id);
+
+-- Bob participe à ses projets
+INSERT INTO project_assignment (project_id, user_id) VALUES
+(@projet_bob_1, @bob_id),
+(@projet_commun_bob, @bob_id);
+
+-- Alice et Bob participent au projet commun
+INSERT INTO project_assignment (project_id, user_id) VALUES
+(@projet_commun_alice, @bob_id),
+(@projet_commun_bob, @alice_id);
 
 -- Étapes du Projet Perso Alice 1
 INSERT INTO step (name, type, project_id) VALUES
@@ -84,12 +109,12 @@ INSERT INTO task_assignment (task_id, user_id) VALUES
 
 -- Étapes du Projet Commun
 INSERT INTO step (name, type, project_id) VALUES
-('Étape 1', 'To do', @projet_commun),
-('Étape 2', 'En cours', @projet_commun);
+('Étape 1', 'To do', @projet_commun_alice),
+('Étape 2', 'En cours', @projet_commun_alice);
 
 -- Récupération des IDs des étapes du Projet Commun
-SET @etape_commun_1 = (SELECT id FROM step WHERE name = 'Étape 1' AND project_id = @projet_commun);
-SET @etape_commun_2 = (SELECT id FROM step WHERE name = 'Étape 2' AND project_id = @projet_commun);
+SET @etape_commun_1 = (SELECT id FROM step WHERE name = 'Étape 1' AND project_id = @projet_commun_alice);
+SET @etape_commun_2 = (SELECT id FROM step WHERE name = 'Étape 2' AND project_id = @projet_commun_alice);
 
 -- Tâches de l'Étape 1 du Projet Commun
 INSERT INTO task (Description, type, step_id) VALUES
@@ -132,6 +157,7 @@ INSERT INTO task_assignment (task_id, user_id) VALUES
 -- Afficher les données insérées (Optionnel, pour vérification)
 SELECT * FROM user;
 SELECT * FROM project;
+SELECT * FROM project_assignment;
 SELECT * FROM step;
 SELECT * FROM task;
 SELECT * FROM task_assignment;

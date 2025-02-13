@@ -105,4 +105,52 @@ router.delete(
 
 /* ************************************************************************* */
 
+/** Steps */
+// Récupérer une étape spécifique
+router.get(
+  "/api/steps/:stepId",
+  authMiddleware.checkToken,
+  loadStep,
+  projectActions.getStep,
+);
+// Mettre à jour une étape spécifique
+router.put(
+  "/api/steps/:stepId",
+  authMiddleware.checkToken,
+  loadStep,
+  projectActions.updateStep,
+);
+// Supprimer une étape spécifique
+router.delete(
+  "/api/steps/:stepId",
+  authMiddleware.checkToken,
+  loadStep,
+  projectActions.deleteStep,
+);
+
+/** Tasks */
+// Récupérer une tâche spécifique
+router.get(
+  "/api/tasks/:taskId",
+  authMiddleware.checkToken,
+  loadTask,
+  projectActions.getTask,
+);
+// Mettre à jour une tâche spécifique
+router.put(
+  "/api/tasks/:taskId",
+  authMiddleware.checkToken,
+  loadTask,
+  projectActions.updateTask,
+);
+// Supprimer une tâche spécifique
+router.delete(
+  "/api/tasks/:taskId",
+  authMiddleware.checkToken,
+  loadTask,
+  projectActions.deleteTask,
+);
+
+/* ************************************************************************* */
+
 export default router;

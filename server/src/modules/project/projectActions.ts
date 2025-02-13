@@ -1,11 +1,11 @@
 import type { NextFunction, Request, RequestHandler, Response } from "express";
 import authMiddleware from "../../Middlewares/authMiddleware";
-import loadProject from "../../Middlewares/loader/loadProject";
-import type { Project } from "../../types/project";
 import projectRepository from "./projectRepository";
 
+import type { ProjectDetails } from "./projectRepository"; // Importe le type ProjectDetails
+
 interface RequestWithProject extends Request {
-  project: Project;
+  project: ProjectDetails;
 }
 
 // browse a specific project
@@ -15,15 +15,183 @@ const getProject: RequestHandler = async (
   next: NextFunction,
 ) => {
   try {
-    // Le middleware loadProject a déjà chargé le projet dans req.project
-    const projectReq = req as RequestWithProject;
+    const projectId = Number(req.params.id);
+    const project = await projectRepository.getProjectDetails(projectId);
 
-    res.status(200).json(projectReq.project);
+    if (!project) {
+      res.status(404).json({ message: "Projet non trouvé" });
+    }
+
+    if (project) {
+      // Type assertion pour que TypeScript sache que req.project est de type ProjectDetails
+      (req as RequestWithProject).project = project;
+    }
+
+    res.status(200).json(project);
+    next();
+    return;
   } catch (error) {
     console.error("Erreur lors de la récupération du projet :", error);
     res
       .status(500)
       .json({ message: "Erreur lors de la récupération du projet" });
+    next(error);
+    return;
+  }
+};
+
+// Get step by id
+const getStep: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const stepId = Number(req.params.stepId);
+    const step = await projectRepository.getStepDetails(stepId);
+
+    if (!step) {
+      res.status(404).json({ message: "Etape non trouvé" });
+      return;
+    }
+
+    res.status(200).json(step);
+  } catch (error) {
+    console.error("Erreur lors de la récupération de l'étape :", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération de l'étape" });
+    next(error);
+  }
+};
+
+// Get task by id
+const getTask: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const taskId = Number(req.params.taskId);
+    const task = await projectRepository.getTaskDetails(taskId);
+
+    if (!task) {
+      res.status(404).json({ message: "Tâche non trouvé" });
+      return;
+    }
+
+    res.status(200).json(task);
+  } catch (error) {
+    console.error("Erreur lors de la récupération de la tâche :", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération de la tâche" });
+    next(error);
+  }
+};
+
+// Update step
+const updateStep: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const stepId = Number(req.params.stepId);
+    const { name, type } = req.body;
+
+    const success = await projectRepository.updateStep(stepId, name, type);
+
+    if (success) {
+      res.status(200).json({ message: "Etape mise à jour" });
+    } else {
+      res.status(404).json({ message: "Etape non trouvé" });
+    }
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour de l'étape :", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la mise à jour de l'étape" });
+    next(error);
+  }
+};
+
+// Update task
+const updateTask: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const taskId = Number(req.params.taskId);
+    const { Description, type } = req.body;
+
+    const success = await projectRepository.updateTask(
+      taskId,
+      Description,
+      type,
+    );
+
+    if (success) {
+      res.status(200).json({ message: "Tâche mise à jour" });
+    } else {
+      res.status(404).json({ message: "Tâche non trouvé" });
+    }
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour de la tâche :", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la mise à jour de la tâche" });
+    next(error);
+  }
+};
+
+// Delete step
+const deleteStep: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const stepId = Number(req.params.stepId);
+
+    const success = await projectRepository.deleteStep(stepId);
+
+    if (success) {
+      res.status(200).json({ message: "Etape supprimée" });
+    } else {
+      res.status(404).json({ message: "Etape non trouvé" });
+    }
+  } catch (error) {
+    console.error("Erreur lors de la suppression de l'étape :", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la suppression de l'étape" });
+    next(error);
+  }
+};
+
+// Delete task
+const deleteTask: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const taskId = Number(req.params.taskId);
+
+    const success = await projectRepository.deleteTask(taskId);
+
+    if (success) {
+      res.status(200).json({ message: "Tâche supprimée" });
+    } else {
+      res.status(404).json({ message: "Tâche non trouvé" });
+    }
+  } catch (error) {
+    console.error("Erreur lors de la suppression de la tâche :", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la suppression de la tâche" });
     next(error);
   }
 };
@@ -146,10 +314,16 @@ const unassignTask: RequestHandler = async (req, res, next) => {
 
 export default {
   getProject,
+  getStep,
+  getTask,
   createStep,
   createTask,
   updateStepType,
   updateTaskType,
   assignTask,
   unassignTask,
+  updateStep,
+  updateTask,
+  deleteStep,
+  deleteTask,
 };

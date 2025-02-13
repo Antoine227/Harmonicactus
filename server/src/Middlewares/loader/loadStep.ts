@@ -3,33 +3,28 @@ import projectRepository from "../../modules/project/projectRepository";
 import type { Step } from "../../types/step";
 
 interface RequestWithStep extends Request {
-  step?: Step;
+  step: Step;
 }
 
-const loadStep: RequestHandler = async (
-  req: RequestWithStep,
+const loadStep = async (
+  req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const stepId = Number.parseInt(req.params.stepId); // Utilise req.params.stepId
-    if (Number.isNaN(stepId)) {
-      res.status(400).json({ message: "ID d'étape invalide" });
-      return;
-    }
-    const step = await projectRepository.getStepDetails(stepId); // Utilise une nouvelle fonction getStepDetails
+    const stepId = Number(req.params.stepId);
+    const step = await projectRepository.getStepDetails(stepId);
 
     if (!step) {
-      res.status(404).json({ message: "Étape non trouvée" }); // Message corrigé
+      res.status(404).json({ message: "Step not found" });
       return;
     }
 
-    req.step = step; // Ajoute l'étape à l'objet req
+    (req as RequestWithStep).step = step;
     next();
   } catch (error) {
-    console.error("Erreur lors du chargement de l'étape :", error);
-    res.status(500).json({ message: "Erreur lors du chargement de l'étape" });
-    next(error);
+    console.error("Error loading step:", error);
+    res.status(500).json({ message: "Failed to load step" });
   }
 };
 
