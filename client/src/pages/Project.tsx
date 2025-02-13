@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Participants from "../components/Participant/Participants";
 import TaskAdd from "../components/Task/TaskAdd";
 import TaskItem from "../components/Task/TaskItem";
 import Navbar from "../components/navbar/navbar";
-// import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import api from "../helpers/api";
 import styles from "./PagesCSS/Project.module.css";
 
@@ -30,16 +31,11 @@ export interface Task {
   participants: number[]; // Liste des IDs des participants
 }
 
-// interface User {
-//   id: number;
-//   pseudo: string;
-// }
-
 function Project() {
   const { id } = useParams<{ id: string }>(); // Récupère l'ID du projet depuis l'URL
   const [project, setProject] = useState<ProjectDetails | null>(null);
   const [newStepName, setNewStepName] = useState("");
-  //   const { user } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchProjectData = async () => {
@@ -173,12 +169,9 @@ function Project() {
       <div className={styles.projectContainer}>
         <h1 className={styles.projectTitle}>{project.title}</h1>
 
-        <div className={styles.usersSection}>
-          <div>prochainement : pseudos des participants avec leur couleur</div>
-          <button type="button" className={styles.participateButton}>
-            Participer
-          </button>
-        </div>
+        {project && user && (
+          <Participants projectId={project.id} currentUserId={user.id} />
+        )}
 
         {project.steps && project.steps.length > 0 ? (
           <ul className={styles.stepsList}>
