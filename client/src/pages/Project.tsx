@@ -113,7 +113,12 @@ function Project() {
         ...project,
         steps: project.steps.map((step) =>
           step.id === stepId
-            ? { ...step, tasks: [...step.tasks, response.data] }
+            ? {
+                ...step,
+                tasks: Array.isArray(step.tasks)
+                  ? [...step.tasks, response.data]
+                  : [response.data],
+              }
             : step,
         ),
       });

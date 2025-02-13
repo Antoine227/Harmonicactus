@@ -125,6 +125,20 @@ class ProjectRepository {
       "INSERT INTO task (Description, type, step_id) VALUES (?, ?, ?)",
       [Description, type, stepId],
     );
+
+    // Après l'insertion, récupérez l'étape nouvellement créée et initialisez tasks
+    const [stepRows] = await databaseClient.query<Rows>(
+      "SELECT * FROM step WHERE id = ?",
+      [result.insertId],
+    );
+
+    if (stepRows.length > 0) {
+      const newStep = stepRows[0] as Step;
+      newStep.tasks = [];
+      // Mettez à jour l'état du projet avec cette nouvelle étape
+      // (Vous devrez adapter cette partie en fonction de la structure de votre état)
+    }
+
     return result.insertId;
   }
 
@@ -194,11 +208,28 @@ class ProjectRepository {
   }
 
   async deleteStep(stepId: number): Promise<boolean> {
-    const [result] = await databaseClient.query<Result>(
-      "DELETE FROM step WHERE id = ?",
-      [stepId],
-    );
-    return result.affectedRows > 0;
+    try {
+      await databaseClient.query("START TRANSACTION");
+
+      // Supprimer d'abord les tâches associées à l'étape
+      await databaseClient.query("DELETE FROM task WHERE step_id = ?", [
+        stepId,
+      ]);
+
+      // Ensuite, supprimer l'étape
+      const [result] = await databaseClient.query<Result>(
+        "DELETE FROM step WHERE id = ?",
+        [stepId],
+      );
+
+      await databaseClient.query("COMMIT");
+
+      return result.affectedRows > 0;
+    } catch (error) {
+      await databaseClient.query("ROLLBACK");
+      console.error("Erreur lors de la suppression de l'étape :", error);
+      throw error;
+    }
   }
 
   async deleteTask(taskId: number): Promise<boolean> {
