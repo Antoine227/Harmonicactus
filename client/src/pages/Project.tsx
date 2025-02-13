@@ -36,6 +36,7 @@ function Project() {
   const [project, setProject] = useState<ProjectDetails | null>(null);
   const [newStepName, setNewStepName] = useState("");
   const [isParticipant, setIsParticipant] = useState(false);
+  const [collapsedSteps, setCollapsedSteps] = useState<number[]>([]);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -249,6 +250,15 @@ function Project() {
     }
   };
 
+  // Fonction pour basculer l'état d'une étape
+  const toggleStepCollapse = (stepId: number) => {
+    setCollapsedSteps((prevCollapsedSteps) =>
+      prevCollapsedSteps.includes(stepId)
+        ? prevCollapsedSteps.filter((id) => id !== stepId)
+        : [...prevCollapsedSteps, stepId],
+    );
+  };
+
   if (!project) {
     return <div>Chargement du projet...</div>;
   }
@@ -292,6 +302,14 @@ function Project() {
                     <option value="Bloqué">Bloqué</option>
                     <option value="Fini">Fini</option>
                   </select>
+
+                  <button
+                    type="button"
+                    onClick={() => toggleStepCollapse(step.id)}
+                  >
+                    {collapsedSteps.includes(step.id) ? "🐵" : "🙈"}
+                  </button>
+
                   <input
                     type="text"
                     value={step.name}
@@ -311,35 +329,37 @@ function Project() {
                 </div>
 
                 {/* Tasks */}
-                <div className={styles.tasksSection}>
-                  {step.tasks && step.tasks.length > 0 ? (
-                    <ul className={styles.tasksList}>
-                      {step.tasks.map((task) => (
-                        <li key={task.id} className={styles.taskItem}>
-                          <TaskItem
-                            task={task}
-                            onUpdateTask={handleUpdateTask}
-                            onDeleteTask={handleDeleteTask}
-                            isParticipant={isParticipant}
-                            onAssignParticipants={handleAssignParticipants}
-                            onRemoveParticipant={handleRemoveParticipant}
-                          />
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className={styles.noTask}>
-                      Aucune tâche pour le moment.
-                    </p>
-                  )}
-                  <div className={styles.addTask}>
-                    <TaskAdd
-                      stepId={step.id}
-                      onAddTask={handleAddTask}
-                      disabled={!isParticipant}
-                    />
+                {!collapsedSteps.includes(step.id) && (
+                  <div className={styles.tasksSection}>
+                    {step.tasks && step.tasks.length > 0 ? (
+                      <ul className={styles.tasksList}>
+                        {step.tasks.map((task) => (
+                          <li key={task.id} className={styles.taskItem}>
+                            <TaskItem
+                              task={task}
+                              onUpdateTask={handleUpdateTask}
+                              onDeleteTask={handleDeleteTask}
+                              isParticipant={isParticipant}
+                              onAssignParticipants={handleAssignParticipants}
+                              onRemoveParticipant={handleRemoveParticipant}
+                            />
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className={styles.noTask}>
+                        Aucune tâche pour le moment.
+                      </p>
+                    )}
+                    <div className={styles.addTask}>
+                      <TaskAdd
+                        stepId={step.id}
+                        onAddTask={handleAddTask}
+                        disabled={!isParticipant}
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
               </li>
             ))}
           </ul>

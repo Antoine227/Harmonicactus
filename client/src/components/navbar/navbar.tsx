@@ -21,7 +21,12 @@ function navbar() {
         onClick={handleAuthAction}
         className={styles.button}
       >
-        <img src={cactusButton} alt="logout" className={styles.buttonImg} />
+        <img
+          src={cactusButton}
+          alt="logout"
+          className={styles.buttonImg}
+          title="Déconnection"
+        />
       </button>
       <h1 className={styles.harmonicactus}>
         <Link to="/account" className={styles.harmonicactus}>
