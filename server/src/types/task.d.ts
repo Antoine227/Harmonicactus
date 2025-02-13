@@ -3,4 +3,5 @@ export interface Task {
   Description: string;
   type: "To do" | "En cours" | "Bloqué" | "Fini";
   step_id: number;
+  participants: { id: number; pseudo: string; color: string }[];
 }

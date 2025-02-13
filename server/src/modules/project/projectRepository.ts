@@ -22,7 +22,7 @@ type Task = {
   type: "To do" | "En cours" | "Bloqué" | "Fini";
   step_id: number;
   //user_id: number; // Supression de la clé, car la liaison many to many est gérée par la table task_assignment
-  participants: number[]; // Liste des IDs des participants
+  participants: { id: number; pseudo: string; color: string }[]; // Liste des IDs des participants
 };
 
 class ProjectRepository {
@@ -61,12 +61,21 @@ class ProjectRepository {
       //récupération des participants pour chaque tache :
       for (const task of tasks) {
         const [participantsRows] = await databaseClient.query<Rows>(
-          "SELECT user_id FROM task_assignment WHERE task_id = ?",
-          [task.id],
+          `SELECT u.id, u.pseudo, pa.color
+           FROM user u
+           INNER JOIN task_assignment ta ON u.id = ta.user_id
+           INNER JOIN project_assignment pa ON u.id = pa.user_id AND pa.project_id = ?
+           WHERE ta.task_id = ?`,
+          [projectId, task.id],
         );
-        const participants = (participantsRows as { user_id: number }[]).map(
-          (row) => row.user_id,
-        );
+
+        const participants = (
+          participantsRows as { id: number; pseudo: string; color: string }[]
+        ).map((row) => ({
+          id: row.id,
+          pseudo: row.pseudo,
+          color: row.color,
+        }));
         task.participants = participants;
       }
 
@@ -211,12 +220,27 @@ class ProjectRepository {
     try {
       await databaseClient.query("START TRANSACTION");
 
-      // Supprimer d'abord les tâches associées à l'étape
+      // 1. Récupérer les IDs de toutes les tâches associées à l'étape
+      const [taskRows] = await databaseClient.query<Rows>(
+        "SELECT id FROM task WHERE step_id = ?",
+        [stepId],
+      );
+      const taskIds = (taskRows as { id: number }[]).map((task) => task.id);
+
+      // 2. Supprimer toutes les assignations de participants pour ces tâches
+      if (taskIds.length > 0) {
+        await databaseClient.query(
+          "DELETE FROM task_assignment WHERE task_id IN (?)",
+          [taskIds],
+        );
+      }
+
+      // 3. Supprimer toutes les tâches associées à l'étape
       await databaseClient.query("DELETE FROM task WHERE step_id = ?", [
         stepId,
       ]);
 
-      // Ensuite, supprimer l'étape
+      // 4. Supprimer l'étape
       const [result] = await databaseClient.query<Result>(
         "DELETE FROM step WHERE id = ?",
         [stepId],
@@ -233,11 +257,29 @@ class ProjectRepository {
   }
 
   async deleteTask(taskId: number): Promise<boolean> {
-    const [result] = await databaseClient.query<Result>(
-      "DELETE FROM task WHERE id = ?",
-      [taskId],
-    );
-    return result.affectedRows > 0;
+    try {
+      await databaseClient.query("START TRANSACTION");
+
+      // Supprimer d'abord les assignations de tâches
+      await databaseClient.query(
+        "DELETE FROM task_assignment WHERE task_id = ?",
+        [taskId],
+      );
+
+      // Ensuite, supprimer la tâche
+      const [result] = await databaseClient.query<Result>(
+        "DELETE FROM task WHERE id = ?",
+        [taskId],
+      );
+
+      await databaseClient.query("COMMIT");
+
+      return result.affectedRows > 0;
+    } catch (error) {
+      await databaseClient.query("ROLLBACK");
+      console.error("Erreur lors de la suppression de la tâche :", error);
+      throw error;
+    }
   }
 }
 

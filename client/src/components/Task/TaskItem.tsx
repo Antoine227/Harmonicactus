@@ -47,8 +47,12 @@ const TaskItem: React.FC<TaskItemProps> = ({
         🖐
       </button>
       {task.participants.map((participant) => (
-        <span key={participant.id} className={styles.participantTag}>
-          {participant.pseudo}
+        <span
+          key={participant.id}
+          className={styles.participantTag}
+          style={{ color: participant.color }}
+        >
+          {participant.pseudo.substring(0, 5)}
           <button
             type="button"
             onClick={() => onRemoveParticipant(task.id, participant.id)}

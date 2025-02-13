@@ -32,24 +32,41 @@ class AccountRepository {
       // Commencer une transaction
       await databaseClient.query("START TRANSACTION");
 
-      // 1. Supprimer les tâches associées aux étapes du projet
+      // 1. Récupérer les IDs des tâches associées au projet (via les étapes)
+      const [taskIdsRows] = await databaseClient.query<Rows>(
+        `SELECT task.id FROM task 
+         INNER JOIN step ON task.step_id = step.id 
+         WHERE step.project_id = ?`,
+        [projectId],
+      );
+      const taskIds = (taskIdsRows as { id: number }[]).map((row) => row.id);
+
+      // 2. Supprimer les enregistrements dans task_assignment pour ces tâches
+      if (taskIds.length > 0) {
+        await databaseClient.query(
+          "DELETE FROM task_assignment WHERE task_id IN (?)",
+          [taskIds],
+        );
+      }
+
+      // 3. Supprimer les tâches associées aux étapes du projet
       await databaseClient.query(
         "DELETE task FROM task INNER JOIN step ON task.step_id = step.id WHERE step.project_id = ?",
         [projectId],
       );
 
-      // 2. Supprimer les étapes du projet
+      // 4. Supprimer les étapes du projet
       await databaseClient.query("DELETE FROM step WHERE project_id = ?", [
         projectId,
       ]);
 
-      // 3. Supprimer les enregistrements dans project_assignment
+      // 5. Supprimer les enregistrements dans project_assignment
       await databaseClient.query(
         "DELETE FROM project_assignment WHERE project_id = ?",
         [projectId],
       );
 
-      // 4. Supprimer le projet
+      // 6. Supprimer le projet
       const [result] = await databaseClient.query<Result>(
         "DELETE FROM project WHERE id = ?",
         [projectId],

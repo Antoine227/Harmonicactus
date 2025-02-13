@@ -221,15 +221,13 @@ const createTask: RequestHandler = async (req, res, next) => {
       type,
       stepId,
     );
-    res
-      .status(201)
-      .json({
-        id: taskId,
-        Description,
-        type,
-        step_id: stepId,
-        participants: [],
-      });
+    res.status(201).json({
+      id: taskId,
+      Description,
+      type,
+      step_id: stepId,
+      participants: [],
+    });
   } catch (error) {
     console.error("Erreur lors de la création de la tâche :", error);
     res.status(500).json({ message: "Erreur lors de la création de la tâche" });
