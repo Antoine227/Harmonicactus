@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import TaskAdd from "../components/Task/TaskAdd";
+import TaskItem from "../components/Task/TaskItem";
 import Navbar from "../components/navbar/navbar";
-import { useAuth } from "../contexts/AuthContext";
+// import { useAuth } from "../contexts/AuthContext";
 import api from "../helpers/api";
 import styles from "./PagesCSS/Project.module.css";
 
@@ -20,7 +22,7 @@ interface Step {
   tasks: Task[];
 }
 
-interface Task {
+export interface Task {
   id: number;
   Description: string;
   type: "To do" | "En cours" | "Bloqué" | "Fini";
@@ -29,8 +31,8 @@ interface Task {
 }
 
 // interface User {
-//     id: number;
-//     pseudo: string;
+//   id: number;
+//   pseudo: string;
 // }
 
 function Project() {
@@ -38,7 +40,7 @@ function Project() {
   const [project, setProject] = useState<ProjectDetails | null>(null);
   const [newStepName, setNewStepName] = useState("");
   const [newTaskDescription, setNewTaskDescription] = useState("");
-  //const { user } = useAuth();
+  //   const { user } = useAuth();
 
   useEffect(() => {
     const fetchProjectData = async () => {
@@ -217,72 +219,29 @@ function Project() {
                     Supprimer
                   </button>
                 </div>
+
                 {/* Tasks */}
                 <div className={styles.tasksSection}>
                   {step.tasks && step.tasks.length > 0 ? (
                     <ul className={styles.tasksList}>
                       {step.tasks.map((task) => (
                         <li key={task.id} className={styles.taskItem}>
-                          <select
-                            value={task.type}
-                            onChange={(e) =>
-                              handleUpdateTask({
-                                ...task,
-                                type: e.target.value as
-                                  | "To do"
-                                  | "En cours"
-                                  | "Bloqué"
-                                  | "Fini",
-                              })
-                            }
-                          >
-                            <option value="To do">To do</option>
-                            <option value="En cours">En cours</option>
-                            <option value="Bloqué">Bloqué</option>
-                            <option value="Fini">Fini</option>
-                          </select>
-                          <input
-                            type="text"
-                            value={task.Description}
-                            onChange={(e) =>
-                              handleUpdateTask({
-                                ...task,
-                                Description: e.target.value,
-                              })
-                            }
+                          <TaskItem
+                            task={task}
+                            onUpdateTask={handleUpdateTask}
+                            onDeleteTask={handleDeleteTask}
                           />
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteTask(task.id)}
-                          >
-                            Supprimer
-                          </button>
                         </li>
                       ))}
-                      <input
-                        type="text"
-                        placeholder="Description de la tâche"
-                        className={styles.taskDescriptionInput}
-                        value={newTaskDescription}
-                        onChange={(e) => setNewTaskDescription(e.target.value)}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleAddTask(step.id)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            handleAddTask(step.id);
-                          }
-                        }}
-                      >
-                        Ajouter une Tâche
-                      </button>
                     </ul>
                   ) : (
                     <p className={styles.noTask}>
                       Aucune tâche pour le moment.
                     </p>
                   )}
+                  <div className={styles.addTask}>
+                    <TaskAdd stepId={step.id} onAddTask={handleAddTask} />
+                  </div>
                 </div>
               </li>
             ))}
@@ -297,16 +256,16 @@ function Project() {
             className={styles.stepTitleInput}
             value={newStepName}
             onChange={(e) => setNewStepName(e.target.value)}
-          />
-          <button
-            type="button"
-            className={styles.addStepButton}
-            onClick={handleAddStep}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleAddStep();
               }
             }}
+          />
+          <button
+            type="button"
+            className={styles.addStepButton}
+            onClick={handleAddStep}
           >
             Ajouter une Étape
           </button>

@@ -1,0 +1,30 @@
+.addTask {
+  display: flex;
+  flex-direction: row;
+  margin-top: 0.2em;
+}
+
+.taskDescriptionInput {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.addTaskbutton {
+  width: 3em;
+  height: 3em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border: solid 4px var(--fifthly-color);
+  background-color: var(--primary-color);
+  box-shadow: var(--box-shadow);
+}
+
+.button:hover {
+  background-color: var(--fifthly-color);
+}

@@ -81,6 +81,7 @@
   flex-direction: row;
   justify-content: space-between;
   width: 98%;
+  height: 0.8em;
   margin-bottom: 0.2em;
   border: solid 3px var(--secondary-color);
   box-shadow: var(--box-shadow);
@@ -97,13 +98,6 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-}
-
-.taskDescriptionInput {
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-right: 10px;
 }
 
 .tasksList {
@@ -128,6 +122,12 @@
   flex-wrap: wrap;
 }
 
+.addTask {
+  display: flex;
+  flex-direction: row;
+}
+
+.noStep,
 .noTask {
   font-size: 0.5em;
   font-style: italic;
