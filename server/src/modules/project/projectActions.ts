@@ -221,7 +221,15 @@ const createTask: RequestHandler = async (req, res, next) => {
       type,
       stepId,
     );
-    res.status(201).json({ id: taskId, Description, type, step_id: stepId });
+    res
+      .status(201)
+      .json({
+        id: taskId,
+        Description,
+        type,
+        step_id: stepId,
+        participants: [],
+      });
   } catch (error) {
     console.error("Erreur lors de la création de la tâche :", error);
     res.status(500).json({ message: "Erreur lors de la création de la tâche" });
@@ -272,13 +280,20 @@ const updateTaskType: RequestHandler = async (req, res, next) => {
 const assignTask: RequestHandler = async (req, res, next) => {
   try {
     const taskId = Number.parseInt(req.params.taskId);
-    const { userId } = req.body;
+    const userId = Number.parseInt(req.body.userId); // Récupérer userId depuis le corps de la requête
+
+    if (Number.isNaN(userId)) {
+      res.status(400).json({ message: "ID utilisateur invalide" });
+      return next();
+    }
+
     const success = await projectRepository.assignTaskToUser(taskId, userId);
     if (success) {
       res.status(200).json({ message: "Tâche assignée à l'utilisateur" });
     } else {
       res.status(404).json({ message: "Tâche non trouvée" });
     }
+    next();
   } catch (error) {
     console.error(
       "Erreur lors de l'assignation de la tâche à l'utilisateur :",
@@ -287,6 +302,7 @@ const assignTask: RequestHandler = async (req, res, next) => {
     res.status(500).json({
       message: "Erreur lors de l'assignation de la tâche à l'utilisateur",
     });
+    next(error);
   }
 };
 
@@ -294,8 +310,11 @@ const assignTask: RequestHandler = async (req, res, next) => {
 const unassignTask: RequestHandler = async (req, res, next) => {
   try {
     const taskId = Number.parseInt(req.params.taskId);
-    const { userId } = req.body;
-    const success = await projectRepository.removeTaskFromUser(taskId, userId);
+    const participantId = Number.parseInt(req.params.participantId); // Récupérer participantId depuis params
+    const success = await projectRepository.removeTaskFromUser(
+      taskId,
+      participantId,
+    );
     if (success) {
       res.status(200).json({ message: "Tâche désassignée à l'utilisateur" });
     } else {

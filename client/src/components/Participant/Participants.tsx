@@ -5,6 +5,7 @@ import styles from "./Participants.module.css";
 interface ParticipantProps {
   projectId: number;
   currentUserId: number;
+  setIsParticipant: (value: boolean) => void;
 }
 
 interface Participant {
@@ -16,6 +17,7 @@ interface Participant {
 const Participants: React.FC<ParticipantProps> = ({
   projectId,
   currentUserId,
+  setIsParticipant,
 }) => {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [isParticipating, setIsParticipating] = useState(false);
@@ -28,9 +30,11 @@ const Participants: React.FC<ParticipantProps> = ({
     try {
       const response = await api.get(`/api/project/${projectId}/participants`);
       setParticipants(response.data);
-      setIsParticipating(
-        response.data.some((p: Participant) => p.id === currentUserId),
+      const isParticipating = response.data.some(
+        (p: Participant) => p.id === currentUserId,
       );
+      setIsParticipating(isParticipating);
+      setIsParticipant(isParticipating);
     } catch (error) {
       console.error("Erreur lors de la récupération des participants :", error);
     }

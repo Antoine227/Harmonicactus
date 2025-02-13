@@ -72,8 +72,8 @@ router.post(
 );
 
 // Désassigner une tâche à un utilisateur
-router.post(
-  "/api/tasks/:taskId/unassign",
+router.delete(
+  "/api/tasks/:taskId/participants/:participantId",
   authMiddleware.checkToken,
   loadTask,
   projectActions.unassignTask,

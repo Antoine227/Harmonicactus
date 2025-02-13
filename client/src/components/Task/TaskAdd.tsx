@@ -4,9 +4,10 @@ import styles from "./TaskAdd.module.css";
 interface TaskAddProps {
   stepId: number;
   onAddTask: (stepId: number, taskDescription: string) => void;
+  disabled?: boolean;
 }
 
-const TaskAdd: React.FC<TaskAddProps> = ({ stepId, onAddTask }) => {
+const TaskAdd: React.FC<TaskAddProps> = ({ stepId, onAddTask, disabled }) => {
   const [newTaskDescription, setNewTaskDescription] = useState("");
 
   const handleAddTaskClick = () => {
@@ -27,13 +28,15 @@ const TaskAdd: React.FC<TaskAddProps> = ({ stepId, onAddTask }) => {
             handleAddTaskClick();
           }
         }}
+        disabled={disabled}
       />
       <button
         type="button"
         onClick={handleAddTaskClick}
         className={styles.addTaskbutton}
+        disabled={disabled}
       >
-        Ajouter une Tâche
+        +
       </button>
     </div>
   );

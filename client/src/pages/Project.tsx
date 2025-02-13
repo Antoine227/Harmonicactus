@@ -28,13 +28,14 @@ export interface Task {
   Description: string;
   type: "To do" | "En cours" | "Bloqué" | "Fini";
   step_id: number;
-  participants: number[]; // Liste des IDs des participants
+  participants: { id: number; pseudo: string; color: string }[]; // Liste des IDs des participants
 }
 
 function Project() {
   const { id } = useParams<{ id: string }>(); // Récupère l'ID du projet depuis l'URL
   const [project, setProject] = useState<ProjectDetails | null>(null);
   const [newStepName, setNewStepName] = useState("");
+  const [isParticipant, setIsParticipant] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -42,13 +43,14 @@ function Project() {
       try {
         const projectResponse = await api.get(`/api/project/${id}`);
         setProject(projectResponse.data);
+        setIsParticipant(projectResponse.data.user_id === user?.id);
       } catch (error) {
         console.error("Erreur lors du chargement du projet :", error);
       }
     };
 
     fetchProjectData();
-  }, [id]);
+  }, [id, user]);
 
   // logique des étapes
 
@@ -108,6 +110,7 @@ function Project() {
       const response = await api.post(`/api/steps/${stepId}/tasks`, {
         Description: taskDescription,
         type: "To do",
+        participants: [],
       });
       setProject({
         ...project,
@@ -164,6 +167,88 @@ function Project() {
     }
   };
 
+  const handleAssignParticipants = async (taskId: number) => {
+    try {
+      if (!user || !project) return;
+
+      // Récupérer les participants du projet
+      const participantsResponse = await api.get(
+        `/api/project/${project.id}/participants`,
+      );
+      const participants = participantsResponse.data;
+
+      // Trouver l'utilisateur actuel dans la liste des participants
+      const currentUser = participants.find(
+        (p: { id: number; pseudo: string; color: string }) => p.id === user.id,
+      );
+
+      if (!currentUser) {
+        console.error("L'utilisateur n'est pas un participant du projet");
+        return;
+      }
+
+      // Appel à l'API pour attribuer l'utilisateur à la tâche
+      await api.post(`/api/tasks/${taskId}/assign`, { userId: user.id }); // S'assurer que user.id est un nombre valide
+
+      // Mise à jour de l'état local du projet
+      setProject({
+        ...project,
+        steps: project.steps.map((step) => ({
+          ...step,
+          tasks: step.tasks.map((task) =>
+            task.id === taskId
+              ? {
+                  ...task,
+                  participants: [
+                    ...task.participants,
+                    {
+                      id: user.id,
+                      pseudo: user.pseudo,
+                      color: currentUser.color,
+                    },
+                  ],
+                }
+              : task,
+          ),
+        })),
+      });
+    } catch (error) {
+      console.error("Erreur lors de l'attribution de la tâche :", error);
+    }
+  };
+
+  const handleRemoveParticipant = async (
+    taskId: number,
+    participantId: number,
+  ) => {
+    try {
+      await api.delete(`/api/tasks/${taskId}/participants/${participantId}`);
+      if (project) {
+        setProject({
+          ...project,
+          steps: project.steps.map((step) => ({
+            ...step,
+            tasks: step.tasks.map((task) =>
+              task.id === taskId
+                ? {
+                    ...task,
+                    participants: task.participants.filter(
+                      (p) => p.id !== participantId,
+                    ),
+                  }
+                : task,
+            ),
+          })),
+        });
+      }
+    } catch (error) {
+      console.error(
+        "Erreur lors de la suppression du participant de la tâche :",
+        error,
+      );
+    }
+  };
+
   if (!project) {
     return <div>Chargement du projet...</div>;
   }
@@ -175,7 +260,11 @@ function Project() {
         <h1 className={styles.projectTitle}>{project.title}</h1>
 
         {project && user && (
-          <Participants projectId={project.id} currentUserId={user.id} />
+          <Participants
+            projectId={project.id}
+            currentUserId={user.id}
+            setIsParticipant={setIsParticipant}
+          />
         )}
 
         {project.steps && project.steps.length > 0 ? (
@@ -186,6 +275,7 @@ function Project() {
                   <select
                     value={step.type}
                     onChange={(e) =>
+                      isParticipant &&
                       handleUpdateStep({
                         ...step,
                         type: e.target.value as
@@ -195,6 +285,7 @@ function Project() {
                           | "Fini",
                       })
                     }
+                    disabled={!isParticipant}
                   >
                     <option value="To do">To do</option>
                     <option value="En cours">En cours</option>
@@ -205,14 +296,17 @@ function Project() {
                     type="text"
                     value={step.name}
                     onChange={(e) =>
+                      isParticipant &&
                       handleUpdateStep({ ...step, name: e.target.value })
                     }
+                    disabled={!isParticipant}
                   />
                   <button
                     type="button"
-                    onClick={() => handleDeleteStep(step.id)}
+                    onClick={() => isParticipant && handleDeleteStep(step.id)}
+                    disabled={!isParticipant}
                   >
-                    Supprimer
+                    🗑
                   </button>
                 </div>
 
@@ -226,6 +320,9 @@ function Project() {
                             task={task}
                             onUpdateTask={handleUpdateTask}
                             onDeleteTask={handleDeleteTask}
+                            isParticipant={isParticipant}
+                            onAssignParticipants={handleAssignParticipants}
+                            onRemoveParticipant={handleRemoveParticipant}
                           />
                         </li>
                       ))}
@@ -236,7 +333,11 @@ function Project() {
                     </p>
                   )}
                   <div className={styles.addTask}>
-                    <TaskAdd stepId={step.id} onAddTask={handleAddTask} />
+                    <TaskAdd
+                      stepId={step.id}
+                      onAddTask={handleAddTask}
+                      disabled={!isParticipant}
+                    />
                   </div>
                 </div>
               </li>
@@ -251,17 +352,19 @@ function Project() {
             placeholder="Nom de l'étape"
             className={styles.stepTitleInput}
             value={newStepName}
-            onChange={(e) => setNewStepName(e.target.value)}
+            onChange={(e) => isParticipant && setNewStepName(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleAddStep();
               }
             }}
+            disabled={!isParticipant}
           />
           <button
             type="button"
             className={styles.addStepButton}
             onClick={handleAddStep}
+            disabled={!isParticipant}
           >
             Ajouter une Étape
           </button>
