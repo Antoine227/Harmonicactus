@@ -28,11 +28,43 @@ class AccountRepository {
 
   // The D of Crud - Delete operation
   async deleteProject(projectId: number): Promise<boolean> {
-    const [result] = await databaseClient.query<Result>(
-      "DELETE FROM project WHERE id = ?",
-      [projectId],
-    );
-    return result.affectedRows > 0;
+    try {
+      // Commencer une transaction
+      await databaseClient.query("START TRANSACTION");
+
+      // 1. Supprimer les tâches associées aux étapes du projet
+      await databaseClient.query(
+        "DELETE task FROM task INNER JOIN step ON task.step_id = step.id WHERE step.project_id = ?",
+        [projectId],
+      );
+
+      // 2. Supprimer les étapes du projet
+      await databaseClient.query("DELETE FROM step WHERE project_id = ?", [
+        projectId,
+      ]);
+
+      // 3. Supprimer les enregistrements dans project_assignment
+      await databaseClient.query(
+        "DELETE FROM project_assignment WHERE project_id = ?",
+        [projectId],
+      );
+
+      // 4. Supprimer le projet
+      const [result] = await databaseClient.query<Result>(
+        "DELETE FROM project WHERE id = ?",
+        [projectId],
+      );
+
+      // Valider la transaction
+      await databaseClient.query("COMMIT");
+
+      return result.affectedRows > 0;
+    } catch (error) {
+      // En cas d'erreur, annuler la transaction
+      await databaseClient.query("ROLLBACK");
+      console.error("Erreur lors de la suppression du projet :", error);
+      throw error;
+    }
   }
 }
 

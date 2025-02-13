@@ -128,6 +128,8 @@ router.delete(
   projectActions.deleteStep,
 );
 
+/* ************************************************************************* */
+
 /** Tasks */
 // Récupérer une tâche spécifique
 router.get(
@@ -152,5 +154,21 @@ router.delete(
 );
 
 /* ************************************************************************* */
+
+/** Participants */
+import participantActions from "./modules/participant/participantActions";
+// Récupérer les participants d'un projet
+router.get(
+  "/api/project/:id/participants",
+  authMiddleware.checkToken,
+  participantActions.getParticipants,
+);
+
+// Ajouter un participant à un projet
+router.post(
+  "/api/project/:id/participate",
+  authMiddleware.checkToken,
+  participantActions.addParticipants,
+);
 
 export default router;

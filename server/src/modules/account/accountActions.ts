@@ -38,12 +38,8 @@ const deleteProject: RequestHandler = async (
     if (Number.isNaN(projectId)) {
       res.status(400).json({ message: "ID de projet invalide" });
     }
-    const success = await accountRepository.deleteProject(projectId);
-    if (success) {
-      res.status(200).json({ message: "Projet supprimé avec succès" });
-    } else {
-      res.status(404).json({ message: "Projet non trouvé" });
-    }
+    await accountRepository.deleteProject(projectId);
+    res.status(200).json({ message: "Projet supprimé avec succès" });
   } catch (error) {
     console.error("Erreur lors de la suppression du projet :", error);
     res

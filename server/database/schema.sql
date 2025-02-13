@@ -12,6 +12,7 @@ create table project (
 );
 
 CREATE TABLE project_assignment (
+    color varchar(10) not null,
     project_id INT UNSIGNED NOT NULL,
     user_id INT UNSIGNED NOT NULL,
     PRIMARY KEY (project_id, user_id),
@@ -70,19 +71,19 @@ SET @projet_commun_bob = (SELECT id FROM project WHERE title = 'Projet Commun' A
 
 -- Ajout des participants aux projets (table project_assignment)
 -- Alice participe à ses projets
-INSERT INTO project_assignment (project_id, user_id) VALUES
-(@projet_alice_1, @alice_id),
-(@projet_commun_alice, @alice_id);
+INSERT INTO project_assignment (project_id, user_id, color) VALUES
+(@projet_alice_1, @alice_id, '#00ff00'),
+(@projet_commun_alice, @alice_id, '#00ff00');
 
 -- Bob participe à ses projets
-INSERT INTO project_assignment (project_id, user_id) VALUES
-(@projet_bob_1, @bob_id),
-(@projet_commun_bob, @bob_id);
+INSERT INTO project_assignment (project_id, user_id, color) VALUES
+(@projet_bob_1, @bob_id, '#00ff00'),
+(@projet_commun_bob, @bob_id, '#00ff00');
 
 -- Alice et Bob participent au projet commun
-INSERT INTO project_assignment (project_id, user_id) VALUES
-(@projet_commun_alice, @bob_id),
-(@projet_commun_bob, @alice_id);
+INSERT INTO project_assignment (project_id, user_id, color) VALUES
+(@projet_commun_alice, @bob_id, '#00ffff'),
+(@projet_commun_bob, @alice_id, '#00ffff');
 
 -- Étapes du Projet Perso Alice 1
 INSERT INTO step (name, type, project_id) VALUES
