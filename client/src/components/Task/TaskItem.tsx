@@ -1,4 +1,3 @@
-import { useState } from "react";
 import type { Task } from "../../pages/Project";
 
 interface TaskItemProps {
@@ -12,10 +11,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
   onUpdateTask,
   onDeleteTask,
 }) => {
-  const [taskDescription, setTaskDescription] = useState(task.Description);
-
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTaskDescription(e.target.value);
     onUpdateTask({ ...task, Description: e.target.value });
   };
 
@@ -37,7 +33,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
       </select>
       <input
         type="text"
-        value={taskDescription}
+        value={task.Description}
         onChange={handleDescriptionChange}
       />
       <button type="button" onClick={() => onDeleteTask(task.id)}>

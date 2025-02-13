@@ -39,7 +39,6 @@ function Project() {
   const { id } = useParams<{ id: string }>(); // Récupère l'ID du projet depuis l'URL
   const [project, setProject] = useState<ProjectDetails | null>(null);
   const [newStepName, setNewStepName] = useState("");
-  const [newTaskDescription, setNewTaskDescription] = useState("");
   //   const { user } = useAuth();
 
   useEffect(() => {
@@ -107,11 +106,11 @@ function Project() {
 
   // Logiques des tâches
 
-  const handleAddTask = async (stepId: number) => {
+  const handleAddTask = async (stepId: number, taskDescription: string) => {
     try {
       if (!project) return;
       const response = await api.post(`/api/steps/${stepId}/tasks`, {
-        Description: newTaskDescription,
+        Description: taskDescription,
         type: "To do",
       });
       setProject({
@@ -122,7 +121,6 @@ function Project() {
             : step,
         ),
       });
-      setNewTaskDescription("");
     } catch (error) {
       console.error("Erreur lors de l'ajout de la tâche :", error);
     }
