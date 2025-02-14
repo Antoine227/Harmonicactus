@@ -152,6 +152,26 @@ class ProjectRepository {
   }
 
   // The U of CRUD - Update operation
+
+  async updateProjectTitle(
+    projectId: number,
+    newTitle: string,
+  ): Promise<boolean> {
+    try {
+      const [result] = await databaseClient.query(
+        "UPDATE project SET title = ? WHERE id = ?",
+        [newTitle, projectId],
+      );
+      return (result as Result).affectedRows > 0;
+    } catch (error) {
+      console.error(
+        "Erreur lors de la modification du titre du projet :",
+        error,
+      );
+      return false;
+    }
+  }
+
   async updateStepType(
     stepId: number,
     type: "To do" | "En cours" | "Bloqué" | "Fini",

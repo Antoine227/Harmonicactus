@@ -59,6 +59,8 @@ function Project() {
   const [isParticipant, setIsParticipant] = useState(false);
   const [collapsedSteps, setCollapsedSteps] = useState<number[]>([]);
   const { user } = useAuth();
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
 
   // Use useCallback for handleProjectUpdate to prevent unnecessary re-renders
   const handleProjectUpdate = useCallback((data: SSEEvent) => {
@@ -96,6 +98,7 @@ function Project() {
         const projectResponse = await api.get(`/api/project/${id}`);
         setProject(projectResponse.data);
         setIsParticipant(projectResponse.data.user_id === user?.id);
+        setNewTitle(projectResponse.data.title);
       } catch (error) {
         console.error("Erreur lors du chargement du projet :", error);
       }
@@ -337,6 +340,28 @@ function Project() {
     );
   };
 
+  const handleRenameProject = async () => {
+    setIsEditingTitle(true);
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewTitle(e.target.value);
+  };
+
+  const handleTitleSubmit = async () => {
+    try {
+      if (!id) return;
+      await api.put(`/api/project/${id}`, { title: newTitle }); // Envoyer la requête de mise à jour au serveur
+      setProject({ ...project, title: newTitle } as ProjectDetails); // Mettre à jour l'état local du projet avec le nouveau titre
+      setIsEditingTitle(false); // Désactiver le mode édition
+    } catch (error) {
+      console.error(
+        "Erreur lors de la modification du titre du projet:",
+        error,
+      );
+    }
+  };
+
   if (!project) {
     return <div>Chargement du projet...</div>;
   }
@@ -346,8 +371,27 @@ function Project() {
       <Navbar />
       <div className={styles.projectContainer}>
         <div className={styles.titleContainer}>
-          <h1 className={styles.projectTitle}>{project.title}</h1>
-          <button type="button" className={styles.renameButton}>
+          {isEditingTitle ? (
+            <input
+              type="text"
+              className={styles.projectTitleInput}
+              value={newTitle}
+              onChange={handleTitleChange}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleTitleSubmit();
+                }
+              }}
+              onBlur={handleTitleSubmit}
+            />
+          ) : (
+            <h1 className={styles.projectTitle}>{project.title}</h1>
+          )}
+          <button
+            type="button"
+            className={styles.renameButton}
+            onClick={handleRenameProject}
+          >
             <img
               src={pen}
               alt="logout"

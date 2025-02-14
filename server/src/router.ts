@@ -79,6 +79,14 @@ router.delete(
   projectActions.unassignTask,
 );
 
+// Mettre à jour un projet spécifique
+router.put(
+  "/api/project/:id",
+  authMiddleware.checkToken,
+  loadProject,
+  projectActions.updateProject,
+);
+
 /** account */
 import accountActions from "./modules/account/accountActions";
 

@@ -42,6 +42,29 @@ const getProject: RequestHandler = async (
   }
 };
 
+const updateProject: RequestHandler = async (req, res) => {
+  const projectId = Number(req.params.id);
+  const newTitle = req.body.title;
+
+  try {
+    const updated = await projectRepository.updateProjectTitle(
+      projectId,
+      newTitle,
+    );
+
+    if (updated) {
+      res.json({ message: "Titre du projet mis à jour avec succès" });
+    } else {
+      res.status(404).json({ message: "Projet non trouvé" });
+    }
+  } catch (error) {
+    console.error("Erreur lors de la modification du titre du projet :", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la modification du titre du projet" });
+  }
+};
+
 // Get step by id
 const getStep: RequestHandler = async (
   req: Request,
@@ -335,6 +358,7 @@ const unassignTask: RequestHandler = async (req, res, next) => {
 
 export default {
   getProject,
+  updateProject,
   getStep,
   getTask,
   createStep,
