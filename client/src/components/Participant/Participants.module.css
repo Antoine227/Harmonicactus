@@ -3,32 +3,51 @@
   flex-direction: column;
   padding: 0.2em;
   align-items: center;
-  width: 90%;
+  width: 80%;
   margin: auto;
-  border-radius: 15px;
-  background-color: var(--light);
+  border-radius: 30px;
+  background-color: rgba(210, 241, 226, 0.986);
   box-shadow: var(--box-shadow);
   border: solid 5px var(--secondary-color);
 }
 
+.participantsTitle {
+  font-size: 0.5em;
+  font-weight: bold;
+  color: var(--secondary-color);
+  text-shadow: -1px -1px 0 var(--secondary-color), 2px -1px 0 black, -1px 1px 0
+    black, 1px 1px 0 black;
+}
+
 .participantsList {
   list-style: none;
-  padding: 0;
+  margin: 0;
+  padding: 0.2em 0;
   display: flex;
 }
 
 .participantsList li {
   margin-right: 10px;
   padding: 5px 10px;
-  border: 1px solid #ccc;
   border-radius: 5px;
+  background-color: var(--dark);
+  font-weight: bold;
+  font-size: 0.4em;
 }
 
 .participateButton {
   padding: 10px 15px;
-  background-color: #007bff;
+  background-color: var(--fifthly-color);
   color: white;
-  border: none;
-  border-radius: 5px;
+  border: solid 5px var(--tertiary-color);
+  border-radius: 10px;
   cursor: pointer;
+  font-weight: bold;
+  box-shadow: var(--box-shadow);
+  text-shadow: -1px -1px 0 black, 2px -1px 0 black, -1px 1px 0 black, 1px 1px 0
+    black;
+}
+
+.participateButton:hover {
+  background-color: var(--tertiary-color);
 }

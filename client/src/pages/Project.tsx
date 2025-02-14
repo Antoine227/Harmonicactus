@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import pen from "../assets/images/pencil-square.svg";
 import Participants from "../components/Participant/Participants";
 import TaskAdd from "../components/Task/TaskAdd";
 import TaskItem from "../components/Task/TaskItem";
@@ -344,8 +345,17 @@ function Project() {
     <>
       <Navbar />
       <div className={styles.projectContainer}>
-        <h1 className={styles.projectTitle}>{project.title}</h1>
-
+        <div className={styles.titleContainer}>
+          <h1 className={styles.projectTitle}>{project.title}</h1>
+          <button type="button" className={styles.renameButton}>
+            <img
+              src={pen}
+              alt="logout"
+              className={styles.buttonImg}
+              title="Renommer"
+            />
+          </button>
+        </div>
         {project && user && (
           <Participants
             projectId={project.id}
@@ -359,45 +369,51 @@ function Project() {
             {project.steps.map((step) => (
               <li key={step.id} className={styles.stepItem}>
                 <div className={styles.stepHead}>
-                  <select
-                    value={step.type}
-                    onChange={(e) =>
-                      isParticipant &&
-                      handleUpdateStep({
-                        ...step,
-                        type: e.target.value as
-                          | "To do"
-                          | "En cours"
-                          | "Bloqué"
-                          | "Fini",
-                      })
-                    }
-                    disabled={!isParticipant}
-                  >
-                    <option value="To do">To do</option>
-                    <option value="En cours">En cours</option>
-                    <option value="Bloqué">Bloqué</option>
-                    <option value="Fini">Fini</option>
-                  </select>
+                  <div className={styles.leftHead}>
+                    <select
+                      value={step.type}
+                      className={styles.stepHeadSelect}
+                      onChange={(e) =>
+                        isParticipant &&
+                        handleUpdateStep({
+                          ...step,
+                          type: e.target.value as
+                            | "To do"
+                            | "En cours"
+                            | "Bloqué"
+                            | "Fini",
+                        })
+                      }
+                      disabled={!isParticipant}
+                    >
+                      <option value="To do">To do</option>
+                      <option value="En cours">En cours</option>
+                      <option value="Bloqué">Bloqué</option>
+                      <option value="Fini">Fini</option>
+                    </select>
 
+                    <button
+                      type="button"
+                      className={styles.stepHeadButton}
+                      onClick={() => toggleStepCollapse(step.id)}
+                    >
+                      {collapsedSteps.includes(step.id) ? "🐵" : "🙈"}
+                    </button>
+
+                    <input
+                      type="text"
+                      value={step.name}
+                      className={styles.stepHeadinput}
+                      onChange={(e) =>
+                        isParticipant &&
+                        handleUpdateStep({ ...step, name: e.target.value })
+                      }
+                      disabled={!isParticipant}
+                    />
+                  </div>
                   <button
                     type="button"
-                    onClick={() => toggleStepCollapse(step.id)}
-                  >
-                    {collapsedSteps.includes(step.id) ? "🐵" : "🙈"}
-                  </button>
-
-                  <input
-                    type="text"
-                    value={step.name}
-                    onChange={(e) =>
-                      isParticipant &&
-                      handleUpdateStep({ ...step, name: e.target.value })
-                    }
-                    disabled={!isParticipant}
-                  />
-                  <button
-                    type="button"
+                    className={styles.stepDeleteButton}
                     onClick={() => isParticipant && handleDeleteStep(step.id)}
                     disabled={!isParticipant}
                   >

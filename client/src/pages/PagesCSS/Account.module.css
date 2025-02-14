@@ -82,13 +82,16 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
+  max-width: 600px;
 }
 
 .projectLink {
   text-decoration: none;
   color: inherit;
-  width: 80%;
+  width: 100%;
+  height: 100%;
   max-width: 500px;
+  padding: 0.7em;
 }
 
 .projectItem {

@@ -51,7 +51,7 @@ const Participants: React.FC<ParticipantProps> = ({
 
   return (
     <div className={styles.participantsSection}>
-      <h2>Participants</h2>
+      <h2 className={styles.participantsTitle}>Participants</h2>
       <ul className={styles.participantsList}>
         {participants.map((participant) => (
           <li key={participant.id} style={{ color: participant.color }}>
