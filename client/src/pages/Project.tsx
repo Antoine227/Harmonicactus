@@ -103,12 +103,18 @@ function Project() {
     fetchProjectData();
 
     // Set up EventSource
-    const eventSource = new EventSource("http://localhost:3000/events");
+    const eventSource = new EventSource("http://localhost:3310/events");
 
     eventSource.onmessage = (event) => {
       try {
-        const data: SSEEvent = JSON.parse(event.data); // Assertion du type SSEEvent
-        handleProjectUpdate(data);
+        // Check if the message is a valid JSON
+        if (event.data?.startsWith("{") || event.data.startsWith("[")) {
+          const data: SSEEvent = JSON.parse(event.data); // Assertion du type SSEEvent
+          handleProjectUpdate(data);
+        } else {
+          console.error("Received non-JSON message:", event.data);
+          // Handle the initial connection message or any other non-JSON messages
+        }
       } catch (error) {
         console.error("Error parsing JSON:", error);
       }
