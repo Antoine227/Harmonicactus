@@ -28,13 +28,15 @@ const getProject: RequestHandler = async (
     }
 
     res.status(200).json(project);
-    next();
+
     return;
   } catch (error) {
     console.error("Erreur lors de la récupération du projet :", error);
-    res
-      .status(500)
-      .json({ message: "Erreur lors de la récupération du projet" });
+    if (!res.headersSent) {
+      res
+        .status(500)
+        .json({ message: "Erreur lors de la récupération du projet" });
+    }
     next(error);
     return;
   }
@@ -291,16 +293,18 @@ const assignTask: RequestHandler = async (req, res, next) => {
     } else {
       res.status(404).json({ message: "Tâche non trouvée" });
     }
-    next();
   } catch (error) {
     console.error(
       "Erreur lors de l'assignation de la tâche à l'utilisateur :",
       error,
     );
-    res.status(500).json({
-      message: "Erreur lors de l'assignation de la tâche à l'utilisateur",
-    });
+    if (!res.headersSent) {
+      res.status(500).json({
+        message: "Erreur lors de l'assignation de la tâche à l'utilisateur",
+      });
+    }
     next(error);
+    return;
   }
 };
 

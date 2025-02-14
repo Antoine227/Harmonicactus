@@ -176,6 +176,21 @@ class ProjectRepository {
 
   // pour assigner une tâche à un utilisateur
   async assignTaskToUser(taskId: number, userId: number): Promise<boolean> {
+    // Vérifier si l'assignation existe déjà
+    const [existingAssignment] = await databaseClient.query<Rows>(
+      "SELECT * FROM task_assignment WHERE task_id = ? AND user_id = ?",
+      [taskId, userId],
+    );
+
+    if (existingAssignment.length > 0) {
+      // L'assignation existe déjà, ne rien faire et retourner true
+      console.warn(
+        `Assignation déjà existante pour task_id=${taskId} et user_id=${userId}`,
+      );
+      return true;
+    }
+
+    // L'assignation n'existe pas, procéder à l'insertion
     const [result] = await databaseClient.query<Result>(
       "INSERT INTO task_assignment (task_id, user_id) VALUES (?, ?)",
       [taskId, userId],

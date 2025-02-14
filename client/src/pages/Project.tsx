@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Participants from "../components/Participant/Participants";
 import TaskAdd from "../components/Task/TaskAdd";
@@ -31,6 +31,26 @@ export interface Task {
   participants: { id: number; pseudo: string; color: string }[]; // Liste des IDs des participants
 }
 
+// Define a type for SSE events
+type SSEEvent =
+  | {
+      type: "taskUpdated";
+      taskId: number;
+      description: string;
+      taskType: "To do" | "En cours" | "Bloqué" | "Fini";
+    }
+  | { type: "stepCreated"; step: Step }
+  | { type: "taskCreated"; task: Task; stepId: number }
+  | {
+      type: "participantAssigned";
+      taskId: number;
+      userId: number;
+      pseudo: string;
+      color: string;
+    }
+  // Add other event types here
+  | { type: "error"; message: string }; // Generic error event
+
 function Project() {
   const { id } = useParams<{ id: string }>(); // Récupère l'ID du projet depuis l'URL
   const [project, setProject] = useState<ProjectDetails | null>(null);
@@ -38,6 +58,36 @@ function Project() {
   const [isParticipant, setIsParticipant] = useState(false);
   const [collapsedSteps, setCollapsedSteps] = useState<number[]>([]);
   const { user } = useAuth();
+
+  // Use useCallback for handleProjectUpdate to prevent unnecessary re-renders
+  const handleProjectUpdate = useCallback((data: SSEEvent) => {
+    setProject((prevProject) => {
+      if (!prevProject) return prevProject;
+
+      switch (data.type) {
+        case "taskUpdated":
+          return {
+            ...prevProject,
+            steps: prevProject.steps.map((step) => ({
+              ...step,
+              tasks: step.tasks.map((task) =>
+                task.id === data.taskId
+                  ? {
+                      ...task,
+                      Description: data.description,
+                      type: data.taskType,
+                    }
+                  : task,
+              ),
+            })),
+          };
+        // Handle other event types (stepCreated, taskCreated, etc.)
+        default:
+          console.warn("Unhandled event type:", data.type);
+          return prevProject;
+      }
+    });
+  }, []);
 
   useEffect(() => {
     const fetchProjectData = async () => {
@@ -51,7 +101,28 @@ function Project() {
     };
 
     fetchProjectData();
-  }, [id, user]);
+
+    // Set up EventSource
+    const eventSource = new EventSource("http://localhost:3000/events");
+
+    eventSource.onmessage = (event) => {
+      try {
+        const data: SSEEvent = JSON.parse(event.data); // Assertion du type SSEEvent
+        handleProjectUpdate(data);
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+      }
+    };
+
+    eventSource.onerror = (error) => {
+      console.error("EventSource failed:", error);
+      eventSource.close();
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, [id, user, handleProjectUpdate]);
 
   // logique des étapes
 
