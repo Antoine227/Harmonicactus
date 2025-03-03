@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import cactus1 from "../../assets/images/cactus1.png";
 import cactusButton from "../../assets/images/cactus_button.png";
+import title from "../../assets/images/harmonicactus.png";
 import { useAuth } from "../../contexts/AuthContext";
 import styles from "./navbar.module.css";
 
@@ -28,11 +29,11 @@ function navbar() {
           title="Déconnection"
         />
       </button>
-      <h1 className={styles.harmonicactus}>
+      <div className={styles.harmonicactus}>
         <Link to="/account" className={styles.harmonicactus}>
-          HARMONICACTUS
+          <img src={title} alt="Harminicacctus" className={styles.title} />
         </Link>
-      </h1>
+      </div>
       <img src={cactus1} alt="cactus" className={styles.imgCactus} />
     </div>
   );

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import title from "../assets/images/harmonicactus.png";
 import { useAuth } from "../contexts/AuthContext";
 import api from "../helpers/api";
 import { errorToast, successToast } from "../helpers/toast";
@@ -49,7 +50,7 @@ function Login() {
   return (
     <div className={styles.mainContainer}>
       <div className={styles.head}>
-        <h1 className={styles.title}>HARMONICACTUS</h1>
+        <img src={title} alt="Harminicacctus" className={styles.title} />
         <p className={styles.quote}>Car la désorganisation, ça pique</p>
       </div>
       <form onSubmit={handleSubmit} className={styles.form}>
