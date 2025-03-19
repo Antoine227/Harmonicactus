@@ -1,0 +1,60 @@
+.navContainer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.2em;
+  align-items: center;
+  flex-direction: row;
+  width: 90%;
+  margin: auto;
+  border-radius: 15px;
+  background-color: var(--tertiary-color);
+  box-shadow: var(--box-shadow);
+  border: solid 5px var(--fifthly-color);
+}
+
+.button {
+  width: 3em;
+  height: 3em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border: solid 4px var(--fifthly-color);
+  background-color: var(--primary-color);
+  box-shadow: var(--box-shadow);
+}
+
+.button:hover {
+  background-color: var(--fifthly-color);
+}
+
+.buttonImg {
+  width: 2em;
+}
+
+.harmonicactus {
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8em;
+  color: var(--fifthly-color);
+  text-shadow: -2px -2px 0 var(--secondary-color), 2px -1px 0 black, -2px 1px 0
+    black, 1px 1px 0 black;
+  @media screen and (min-width: 768px) {
+    font-size: 1em;
+  }
+}
+
+.imgCactus {
+  max-width: 1em;
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  width: 10em;
+  margin-bottom: 0.2em;
+}

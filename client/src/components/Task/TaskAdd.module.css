@@ -1,0 +1,34 @@
+.addTask {
+  display: flex;
+  flex-direction: row;
+  margin-top: 0.2em;
+  max-height: 1em;
+}
+
+.taskDescriptionInput {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.addTaskbutton {
+  width: 1.9em;
+  height: 1.6em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border: solid 3px var(--tertiary-color);
+  background-color: var(--secondary-color);
+  box-shadow: var(--box-shadow);
+  font-weight: bold;
+  font-size: 0.5em;
+  padding: 0;
+}
+
+.addTaskbutton:hover {
+  background-color: var(--tertiary-color);
+}

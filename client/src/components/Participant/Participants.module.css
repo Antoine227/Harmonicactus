@@ -1,0 +1,55 @@
+.participantsSection {
+  display: flex;
+  flex-direction: column;
+  padding: 0.2em;
+  align-items: center;
+  width: 80%;
+  margin: auto;
+  border-radius: 30px;
+  background-color: rgba(210, 241, 226, 0.986);
+  box-shadow: var(--box-shadow);
+  border: solid 5px var(--secondary-color);
+}
+
+.participantsTitle {
+  font-size: 0.5em;
+  font-weight: bold;
+  color: var(--secondary-color);
+  text-shadow: -1px -1px 0 var(--secondary-color), 2px -1px 0 black, -1px 1px 0
+    black, 1px 1px 0 black;
+}
+
+.participantsList {
+  list-style: none;
+  margin: 0;
+  padding: 0.2em 0;
+  display: flex;
+}
+
+.participantsList li {
+  margin-right: 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: var(--dark);
+  font-weight: bold;
+  font-size: 0.4em;
+  text-shadow: 1px 1px 0 rgb(189, 188, 188), 1px 1px 0 rgb(189, 188, 188), 1px
+    1px 0 rgb(189, 188, 188), 1px 1px 0 rgb(189, 188, 188);
+}
+
+.participateButton {
+  padding: 10px 15px;
+  background-color: var(--fifthly-color);
+  color: white;
+  border: solid 5px var(--tertiary-color);
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: var(--box-shadow);
+  text-shadow: -1px -1px 0 black, 2px -1px 0 black, -1px 1px 0 black, 1px 1px 0
+    black;
+}
+
+.participateButton:hover {
+  background-color: var(--tertiary-color);
+}

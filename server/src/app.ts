@@ -1,58 +1,23 @@
-// Load the express module to create a web application
-
-import express from "express";
+import { EventEmitter } from "node:events";
+import express, { type Request } from "express";
 
 const app = express();
-
-// Configure it
-
-/* ************************************************************************* */
-
-// CORS Handling: Why is the current code present and do I need to define specific allowed origins for my project?
-
-// CORS (Cross-Origin Resource Sharing) is a security mechanism in web browsers that blocks requests from a different domain than the server.
-// You may find the following magic line in forums:
-
-// app.use(cors());
-
-// You should NOT do that: such code uses the `cors` module to allow all origins, which can pose security issues.
-// For this pedagogical template, the CORS code allows CLIENT_URL in development mode (when process.env.CLIENT_URL is defined).
 
 import cors from "cors";
 
 if (process.env.CLIENT_URL != null) {
-  app.use(cors({ origin: [process.env.CLIENT_URL] }));
+  app.use(
+    cors({
+      origin: [process.env.CLIENT_URL || "http://localhost:3000"],
+      credentials: true,
+    }),
+  );
 }
 
-// If you need to allow extra origins, you can add something like this:
+import cookieParser from "cookie-parser";
 
-/*
-app.use(
-  cors({
-    origin: ["http://mysite.com", "http://another-domain.com"],
-  }),
-);
-*/
-
-// With ["http://mysite.com", "http://another-domain.com"]
-// to be replaced with an array of your trusted origins
-
-/* ************************************************************************* */
-
-// Request Parsing: Understanding the purpose of this part
-
-// Request parsing is necessary to extract data sent by the client in an HTTP request.
-// For example to access the body of a POST request.
-// The current code contains different parsing options as comments to demonstrate different ways of extracting data.
-
-// 1. `express.json()`: Parses requests with JSON data.
-// 2. `express.urlencoded()`: Parses requests with URL-encoded data.
-// 3. `express.text()`: Parses requests with raw text data.
-// 4. `express.raw()`: Parses requests with raw binary data.
-
-// Uncomment one or more of these options depending on the format of the data sent by your client:
-
-// app.use(express.json());
+app.use(express.json());
+app.use(cookieParser());
 // app.use(express.urlencoded());
 // app.use(express.text());
 // app.use(express.raw());
@@ -67,13 +32,54 @@ app.use(router);
 
 /* ************************************************************************* */
 
-// Production-ready setup: What is it for?
+// Create an EventEmitter
+const eventEmitter = new EventEmitter();
+app.set("eventEmitter", eventEmitter); // Attach eventEmitter to app
 
-// The code includes sections to set up a production environment where the client and server are executed from the same processus.
+// SSE endpoint
+app.get("/events", (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders(); // Flush headers to immediately establish the connection
 
-// What it's for:
-// - Serving client static files from the server, which is useful when building a single-page application with React.
-// - Redirecting unhandled requests (e.g., all requests not matching a defined API route) to the client's index.html. This allows the client to handle client-side routing.
+  let isConnectionOpen = true; // Flag to track connection status
+
+  // Send a connection message
+  res.write("data: Connection established\n\n");
+
+  const sendEvent = (data: Record<string, unknown>) => {
+    if (!isConnectionOpen) {
+      logger.warn("Attempted to send event to closed connection");
+      return;
+    }
+    res.write(`data: ${JSON.stringify(data)}\n\n`);
+  };
+
+  eventEmitter.on("projectUpdate", sendEvent);
+
+  req.on("close", () => {
+    isConnectionOpen = false; // Set connection status to closed
+    logger.info("Client disconnected");
+    eventEmitter.removeListener("projectUpdate", sendEvent);
+  });
+});
+
+// Extend the Request interface to include eventEmitter
+interface CustomRequest extends Request {
+  eventEmitter?: EventEmitter;
+}
+
+// Attach eventEmitter to request object via middleware
+app.use((req: CustomRequest, res, next) => {
+  req.eventEmitter = app.get("eventEmitter");
+  next();
+});
+
+// Mount the API router
+app.use(router);
+
+/* ************************************************************************* */
 
 import fs from "node:fs";
 import path from "node:path";
@@ -121,5 +127,17 @@ const logErrors: ErrorRequestHandler = (err, req, res, next) => {
 app.use(logErrors);
 
 /* ************************************************************************* */
+
+import winston from "winston";
+
+// Create a logger instance
+const logger = winston.createLogger({
+  level: "info",
+  format: winston.format.json(),
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: "combined.log" }),
+  ],
+});
 
 export default app;

@@ -1,0 +1,100 @@
+.mainContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+}
+
+.head {
+  margin-top: 0.1em;
+  padding-bottom: 0.5em;
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  width: 10em;
+  margin-bottom: 0.2em;
+}
+
+.quote {
+  font-style: italic;
+  font-weight: bold;
+  font-size: 0.5em;
+  margin-top: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 1em;
+  padding: 0.5em;
+  border-radius: 10px;
+  background-color: var(--light);
+  box-shadow: var(--box-shadow);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5em;
+  gap: 0.2em;
+  width: 100%;
+}
+
+.label {
+  font-size: 0.7em;
+  font-weight: bold;
+  color: var(--fifthly-color);
+}
+
+.input {
+  border: 0.2em solid var(--fifthly-color);
+  border-radius: 5px;
+  height: 3vh;
+  max-height: 2em;
+  margin: 0.2em 1.5em;
+}
+
+.button {
+  padding: 0.4em 15px;
+  border: solid 3px var(--fifthly-color);
+  border-radius: 5px;
+  background-color: var(--tertiary-color);
+  color: var(--fifthly-color);
+  font-weight: bolder;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: var(--fifthly-color);
+  color: var(--tertiary-color);
+}
+
+.text {
+  font-size: 0.6em;
+  color: var(--fifthly-color);
+  font-weight: bold;
+}
+
+.toggleButton {
+  color: var(--tertiary-color);
+  cursor: pointer;
+  text-shadow: var(--box-shadow);
+}
+
+.toggleButton:hover {
+  color: var(--fifthly-color);
+}
+
+.errorText {
+  color: red;
+  font-size: 0.4em;
+  margin-top: 0.2em;
+}
