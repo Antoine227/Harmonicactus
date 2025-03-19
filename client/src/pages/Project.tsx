@@ -151,19 +151,22 @@ function Project() {
   };
 
   const handleDeleteStep = async (stepId: number) => {
-    try {
-      await api.delete(`/api/steps/${stepId}`);
-      if (project) {
-        setProject({
-          ...project,
-          steps: project.steps.filter((step) => step.id !== stepId),
-          id: project.id,
-          title: project.title,
-          user_id: project.user_id,
-        });
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer cette étape ?")) {
+      try {
+        await api.delete(`/api/steps/${stepId}`);
+        if (project) {
+          setProject({
+            ...project,
+            steps: project.steps.filter((step) => step.id !== stepId),
+            id: project.id,
+            title: project.title,
+            user_id: project.user_id,
+          });
+        }
+      } catch (error) {
+        console.error("Erreur lors de la suppression de l'étape :", error);
+        alert("Erreur lors de la suppression de l'étape. Veuillez réessayer.");
       }
-    } catch (error) {
-      console.error("Erreur lors de la suppression de l'étape :", error);
     }
   };
 
@@ -213,19 +216,22 @@ function Project() {
   };
 
   const handleDeleteTask = async (taskId: number) => {
-    try {
-      await api.delete(`/api/tasks/${taskId}`);
-      if (project) {
-        setProject({
-          ...project,
-          steps: project.steps.map((step) => ({
-            ...step,
-            tasks: step.tasks.filter((task) => task.id !== taskId),
-          })),
-        });
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer cette tâche ?")) {
+      try {
+        await api.delete(`/api/tasks/${taskId}`);
+        if (project) {
+          setProject({
+            ...project,
+            steps: project.steps.map((step) => ({
+              ...step,
+              tasks: step.tasks.filter((task) => task.id !== taskId),
+            })),
+          });
+        }
+      } catch (error) {
+        console.error("Erreur lors de la suppression de la tâche :", error);
+        alert("Erreur lors de la suppression de la tâche. Veuillez réessayer.");
       }
-    } catch (error) {
-      console.error("Erreur lors de la suppression de la tâche :", error);
     }
   };
 
@@ -440,6 +446,7 @@ function Project() {
                       type="button"
                       className={styles.stepHeadButton}
                       onClick={() => toggleStepCollapse(step.id)}
+                      title="Cacher"
                     >
                       {collapsedSteps.includes(step.id) ? "🐵" : "🙈"}
                     </button>
@@ -460,8 +467,9 @@ function Project() {
                     className={styles.stepDeleteButton}
                     onClick={() => isParticipant && handleDeleteStep(step.id)}
                     disabled={!isParticipant}
+                    title="Supprimer"
                   >
-                    🗑
+                    ❌
                   </button>
                 </div>
 

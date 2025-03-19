@@ -35,6 +35,7 @@ const TaskAdd: React.FC<TaskAddProps> = ({ stepId, onAddTask, disabled }) => {
         onClick={handleAddTaskClick}
         className={styles.addTaskbutton}
         disabled={disabled}
+        title="Ajouter une tâche"
       >
         +
       </button>
