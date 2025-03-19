@@ -46,6 +46,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
           className={styles.taskHeadButton}
           onClick={() => onAssignParticipants(task.id)}
           disabled={!isParticipant}
+          title="S'assigner la tâche"
         >
           🖐
         </button>
@@ -61,6 +62,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
               onClick={() => onRemoveParticipant(task.id, participant.id)}
               className={styles.participantCross}
               disabled={!isParticipant}
+              title="Désassigner la tâche"
             >
               ❌
             </button>
@@ -79,8 +81,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
         className={styles.taskDeleteButton}
         onClick={() => onDeleteTask(task.id)}
         disabled={!isParticipant}
+        title="Supprimer"
       >
-        🗑
+        ❌
       </button>
     </>
   );
