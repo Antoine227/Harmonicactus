@@ -9,13 +9,14 @@
 
 .head {
   margin-top: 0.1em;
-  padding-bottom: 0.5em;
+  padding-bottom: 0.2em;
 }
 
 .title {
   display: flex;
   justify-content: center;
   width: 10em;
+  margin-top: 0.6em;
   margin-bottom: 0.2em;
 }
 

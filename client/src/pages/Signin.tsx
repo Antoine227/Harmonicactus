@@ -1,5 +1,6 @@
 import { type SetStateAction, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import title from "../assets/images/harmonicactus.png";
 import { useAuth } from "../contexts/AuthContext";
 import api from "../helpers/api";
 import { errorToast, successToast } from "../helpers/toast";
@@ -27,7 +28,7 @@ function Signin() {
         if (response.status === 201) {
           successToast("Inscription réussie !");
           // Connexion automatique après l'inscription (facultatif)
-          handleLogin(response.data); // Assumes the API returns the created user
+          handleLogin(response.data.user); // Assumes the API returns the created user
           navigate("/account");
         } else {
           errorToast("Erreur lors de l'inscription. Veuillez réessayer.");
@@ -60,7 +61,7 @@ function Signin() {
   return (
     <div className={styles.mainContainer}>
       <div className={styles.head}>
-        <h1 className={styles.title}>HARMONICACTUS</h1>
+        <img src={title} alt="Harminicacctus" className={styles.title} />
         <p className={styles.quote}>Car la désorganisation, ça pique</p>
       </div>
       <form className={styles.form} onSubmit={handleSubmit}>

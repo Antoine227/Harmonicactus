@@ -1,17 +1,31 @@
 import type { RequestHandler } from "express";
 
+import jwt from "../../Middlewares/jwtMiddleware";
 // Import access to data
 import authRepository from "./authRepository";
 
 // Gère l'inscription d'un nouvel utilisateur
 const register: RequestHandler = async (req, res, next) => {
   try {
-    const user = await authRepository.create(req.body);
+    const userId = await authRepository.create(req.body);
+    const user = await authRepository.readById(userId);
 
-    // Respond with the user in JSON format
-    res.status(201).json(user);
+    // Créer un token JWT pour le nouvel utilisateur
+    const token = jwt.createToken({ id: user.id, pseudo: user.pseudo });
+
+    // Envoyer le token dans un cookie et la réponse JSON
+    res
+      .cookie("user_token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      })
+      .status(201)
+      .json({
+        user: { ...user, password: undefined },
+        message: "Inscription et connexion réussies",
+      });
   } catch (err) {
-    // Pass any errors to the error-handling middleware
     console.error("Erreur lors de l'inscription:", err);
     res.status(400).json({ message: "Email ou pseudo invalide" });
   }
