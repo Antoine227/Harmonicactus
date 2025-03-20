@@ -27,6 +27,19 @@ type Task = {
 
 class ProjectRepository {
   // The Rs of CRUD - Read operations
+  async getProjectById(projectId: number): Promise<ProjectDetails | undefined> {
+    const [projectRows] = await databaseClient.query<Rows>(
+      "SELECT * FROM project WHERE id = ?",
+      [projectId],
+    );
+
+    if (projectRows.length === 0) {
+      return undefined;
+    }
+
+    return projectRows[0] as ProjectDetails;
+  }
+
   async getProjectDetails(
     projectId: number,
   ): Promise<ProjectDetails | undefined> {

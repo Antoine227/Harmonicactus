@@ -1,4 +1,5 @@
 import type { RequestHandler } from "express";
+import projectRepository from "../project/projectRepository";
 import participantRepository from "./participantRepository";
 
 const getParticipants: RequestHandler = async (req, res) => {
@@ -15,7 +16,7 @@ const getParticipants: RequestHandler = async (req, res) => {
 const addParticipants: RequestHandler = async (req, res) => {
   try {
     const projectId = Number(req.params.id);
-    const userId = req.user.id; // Assurez-vous que votre middleware d'authentification ajoute l'utilisateur à req
+    const userId = req.user.id;
 
     const isAlreadyParticipant = await participantRepository.isParticipant(
       projectId,
@@ -26,6 +27,13 @@ const addParticipants: RequestHandler = async (req, res) => {
       return;
     }
 
+    const project = await projectRepository.getProjectById(projectId);
+    // Si l'utilisateur est le créateur du projet, on l'ajoute automatiquement
+    if (!project) {
+      res.status(404).json({ message: "Projet non trouvé" });
+      return;
+    }
+    // Sinon, on l'ajoute normalement
     await participantRepository.addParticipant(projectId, userId);
     res.status(201).json({ message: "Vous participez maintenant au projet" });
   } catch (error) {
