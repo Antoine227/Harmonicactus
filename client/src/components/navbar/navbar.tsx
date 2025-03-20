@@ -31,7 +31,12 @@ function navbar() {
       </button>
       <div className={styles.harmonicactus}>
         <Link to="/account" className={styles.harmonicactus}>
-          <img src={title} alt="Harminicacctus" className={styles.title} />
+          <img
+            src={title}
+            alt="Harminicacctus"
+            title="Retour au compte"
+            className={styles.title}
+          />
         </Link>
       </div>
       <img src={cactus1} alt="cactus" className={styles.imgCactus} />

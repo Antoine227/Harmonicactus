@@ -48,11 +48,16 @@ function Account() {
       const response = await api.post("/api/account/projects", {
         title: newProjectTitle,
       });
+
+      // Ajouter automatiquement l'utilisateur comme participant
+      await api.post(`/api/project/${response.data.id}/participate`);
+
       setProjects([...projects, response.data]);
       setNewProjectTitle(""); // Réinitialise le champ de saisie
+      successToast("Projet créé !");
     } catch (error) {
       console.error("Erreur lors de la création du projet:", error);
-      // Gérer l'erreur (par exemple, afficher un message à l'utilisateur)
+      errorToast("Erreur lors de la création du projet");
     }
   };
 
