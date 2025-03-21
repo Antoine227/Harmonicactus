@@ -30,7 +30,7 @@
   margin-right: 10px;
   padding: 5px 10px;
   border-radius: 5px;
-  background-color: var(--dark);
+  background-color: rgba(0, 0, 0, 0.774);
   font-weight: bold;
   font-size: 0.4em;
   text-shadow: 1px 1px 0 rgb(189, 188, 188), 1px 1px 0 rgb(189, 188, 188), 1px
